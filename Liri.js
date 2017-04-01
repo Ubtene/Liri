@@ -8,6 +8,8 @@ var client = twitterKeys.key;
 
 var request = require('request');
 
+var myArgs = process.argv.slice(3);
+
 var thirdItem = process.argv[3];
 
 var secondItem = process.argv[2];
@@ -91,7 +93,13 @@ if (secondItem === "my-tweets") {
 
 if (secondItem === "spotify-this-song") {
 
-spotify.search({ type: 'track', query: thirdItem }, function(err, data) {
+console.log(myArgs);
+
+var string = myArgs.join(" ");
+
+console.log(string);
+
+spotify.search({ type: 'track', query: string }, function(err, data) {
     if ( err ) {
         console.log('Error occurred: ' + err);
         return;  //from spotify npm docs
@@ -109,11 +117,13 @@ spotify.search({ type: 'track', query: thirdItem }, function(err, data) {
       }
 
 
-if (secondItem === "hi") {
+if (secondItem === "do-what-it-says") {
 
 fs.readFile('./random.txt', "utf8",  (err, data) => {
   if (err) throw err;
 var read = data.split(",")
+
+console.log(read[1]);
 
 spotify.search({ type: 'track', query: read[1] }, function(err, data) {
     if ( err ) {
