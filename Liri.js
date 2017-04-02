@@ -10,6 +10,8 @@ var request = require('request');
 
 var myArgs = process.argv.slice(3);
 
+var twitterUsername = process.argv.slice(2);
+
 var thirdItem = process.argv[3];
 
 var secondItem = process.argv[2];
@@ -68,81 +70,117 @@ if (secondItem === 'movie-this') {
 
     }
 
-} 
+}
 
 
 if (secondItem === "my-tweets") {
 
-    client.get('statuses/user_timeline', { include_entities: true, count: 20 },
-        function(err, tweets, response) {
-            if (err) {
-                console.log(err.toString());
-            } else {
+    if (!thirdItem) {
 
-                for (var i = 0; i < tweets.length; i++) {
-                    console.log(JSON.stringify(tweets[i].text)),
-                        // console.log(JSON.stringify(data[i].text, null, 2)); 
-                        console.log('------------------------------------------')
+        client.get('statuses/user_timeline', { include_entities: true, count: 20 },
+            function(err, tweets, response) {
+                if (err) {
+                    console.log(err.toString());
+                } else {
+
+                    for (var i = 0; i < tweets.length; i++) {
+                        console.log(JSON.stringify(tweets[i].text)),
+                            // console.log(JSON.stringify(data[i].text, null, 2)); 
+                            console.log('------------------------------------------')
+                    }
+
                 }
+            });
 
+    }
+
+}
+
+if (secondItem == "twitterHandle@") {
+
+    client.get('statuses/user_timeline', { screen_name: thirdItem, count: 20 }, function(error, tweets, response) {
+        if (!error) {
+            for (var i = 0; i < tweets.length; i++) {
+                console.log(JSON.stringify(tweets[i].text));
             }
-        });
+
+        }
+
+    });
 
 }
 
 
+
 if (secondItem === "spotify-this-song") {
 
-console.log(myArgs);
+    var string = myArgs.join(" ");
 
-var string = myArgs.join(" ");
 
-console.log(string);
+    if (string) {
 
-spotify.search({ type: 'track', query: string }, function(err, data) {
-    if ( err ) {
-        console.log('Error occurred: ' + err);
-        return;  //from spotify npm docs
+        spotify.search({ type: 'track', query: string }, function(err, data) {
+            if (err) {
+                console.log('Error occurred: ' + err);
+                return; //from spotify npm docs
+            } else {
+                var songInfo = data.tracks.items[0];
+                console.log(songInfo.name);
+                console.log(songInfo.artists[0].name);
+                console.log(songInfo.preview_url);
+                console.log(songInfo.album.name);
+
+
+            };
+        });
+    } else {
+
+        spotify.search({ type: 'track', query: "The Sign Ace of Base" }, function(err, data) {
+            if (err) {
+                console.log('Error occurred: ' + err);
+                return; //from spotify npm docs
+            } else {
+
+                var songInfo = data.tracks.items[0];
+                console.log(songInfo.name);
+                console.log(songInfo.artists[0].name);
+                console.log(songInfo.preview_url);
+                console.log(songInfo.album.name);
+
+            };
+        });
+
     }
-    else{
-    var songInfo = data.tracks.items[0];
-    var songResult = console.log(songInfo.artists[0].name)
-                     console.log(songInfo.name)
-                     console.log(songInfo.album.name)
-                     console.log(songInfo.preview_url)
-    // console.log(songResult);
-    };
-  });
 
-      }
-
+}
 
 if (secondItem === "do-what-it-says") {
 
-fs.readFile('./random.txt', "utf8",  (err, data) => {
-  if (err) throw err;
-var read = data.split(",")
+    fs.readFile('./random.txt', "utf8", (err, data) => {
+        if (err) throw err;
+        var read = data.split(",")
 
-console.log(read[1]);
+        console.log(read[1]);
 
-spotify.search({ type: 'track', query: read[1] }, function(err, data) {
-    if ( err ) {
-        console.log('Error occurred: ' + err);
-        return;  //from spotify npm docs
-    }
-    else{
-    var songInfo = data.tracks.items[0];
-    var songResult = console.log(songInfo.artists[0].name)
-                     console.log(songInfo.name)
-                     console.log(songInfo.album.name)
-                     console.log(songInfo.preview_url)
-    // console.log(songResult);
-    };
-  });
+        spotify.search({ type: 'track', query: read[1] }, function(err, data) {
+            if (err) {
+                console.log('Error occurred: ' + err);
+                return; //from spotify npm docs
+            } else {
+
+                var songInfo = data.tracks.items[0];
+                console.log(songInfo.artists[0].name);
+                console.log(songInfo.preview_url);
+                console.log(songInfo.album.name);
 
 
 
+            };
+        });
 
-});
+
+
+
+    });
 
 }
